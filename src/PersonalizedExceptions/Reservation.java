@@ -13,7 +13,10 @@ public class Reservation {
 	//Aqui estou fazendo um formatador de datas para o formato brasileiro
 	private static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	
-	public Reservation(int roomNumber, Date checkIn, Date checkOut) {
+	public Reservation(int roomNumber, Date checkIn, Date checkOut) throws ReservationException {
+		if (!checkOut.after(checkIn)) {
+			throw new ReservationException("Check-Out date must be after the check-In date");
+		}
 		this.roomNumber = roomNumber;
 		this.checkIn = checkIn;
 		this.checkOut = checkOut;
@@ -41,16 +44,16 @@ public class Reservation {
 		return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);	
 	}
 	
-	public String updateDates(Date checkIn, Date checkOut) {
+	public void updateDates(Date checkIn, Date checkOut) throws ReservationException {
 		Date now = new Date();
 		if (checkIn.before(now) || checkOut.before(now)){
-			return "Reservation dates for updates must be future";
+			throw new ReservationException("Reservation date must be future date");
 		}else if (!checkOut.after(checkIn)) {
-			return "Reservation dates for updates must be future";
-		}else
+			throw new ReservationException("Check-Out date must be after the check-In date");
+		}
+		
 		this.checkIn = checkIn;
 		this.checkOut = checkOut;
-		return null;
 	}
 
 	@Override
